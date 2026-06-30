@@ -1,0 +1,66 @@
+para el Backend:
+src/main/java/com/epiis.../freelancer/
+│
+├── config/
+│   ├── CorsConfig.java           # Configuración de CORS 
+│   └── DatabaseSeeder.java       # Poblado inicial de roles (Admin, Cliente, Freelancer) y usuarios de prueba
+│
+├── security/
+│   ├── SecurityConfig.java       # Configuración principal de Spring Security (rutas públicas vs protegidas)
+│   ├── JwtFilter.java            # Filtro que intercepta peticiones, extrae el token y valida el contexto
+│   ├── JwtProvider.java          # Componente que genera, decodifica y valida la firma del token JWT
+│   └── UserDetailsServiceImpl.java # Servicio intermedio requerido por Spring Security para buscar usuarios en la BD
+│
+├── model/ (Entidades JPA / MariaDB)
+│   ├── Usuario.java              # Datos base: id, username, password, email y Rol
+│   ├── Rol.java                  # Enumerado o Entidad (CLIENTE, FREELANCER, ADMIN)
+│   ├── Proyecto.java             # Creado por un Cliente: título, descripción, presupuesto, estado (ABIERTO, EN_PROGRESO, TERMINADO)
+│   └── Postulacion.java          # Hecha por un Freelancer: propuesta_economica, carta_presentacion, estado (PENDIENTE, ACEPTADA, RECHAZADA)
+│
+├── dto/ (Data Transfer Objects)
+│   ├── auth/
+│   │   ├── LoginRequestDTO.java      # Datos estrictos para iniciar sesión (username, password)
+│   │   ├── LoginResponseDTO.java     # Lo que vuelve al cliente: el JWT string y los datos básicos del usuario
+│   │   └── RegistroRequestDTO.java   # Datos para registrarse (incluyendo la selección de Rol)
+│   ├── proyecto/
+│   │   ├── ProyectoCrearDTO.java     # Solo lo necesario para publicar un proyecto (titulo, descripcion, presupuesto)
+│   │   └── ProyectoResponseDTO.java  # Estructura limpia para enviar a Postman o la Vista (oculta datos innecesarios de la BD)
+│   └── postulacion/
+│       └── PostulacionRequestDTO.java # Datos para postularse a un proyecto
+│
+├── repository/ (Interfaces de acceso a MariaDB)
+│   ├── UsuarioRepository.java    # Buscar por username, verificar si existe email, etc.
+│   ├── ProyectoRepository.java   # Buscar proyectos por cliente, buscar proyectos abiertos, etc.
+│   └── PostulacionRepository.java # Buscar postulaciones por proyecto o por freelancer
+│
+├── service/ (Lógica de Negocio Pura)
+│   ├── AuthService.java          # Registro de usuarios (encriptando contraseña) y lógica de login
+│   ├── ProyectoService.java      # Validar reglas (ej: un freelancer no puede crear proyectos; lógica de cambiar estados)
+│   └── PostulacionService.java   # Validar reglas (ej: no postularse dos veces al mismo proyecto; aceptar postulación)
+│
+├── controller/ (Endpoints REST para Postman)
+│   ├── AuthController.java       # POST /api/auth/register, POST /api/auth/login (Públicos)
+│   ├── ProyectoController.java   # GET /api/proyectos (Público), POST /api/proyectos (Protegido - Solo Cliente)
+│   └── PostulacionController.java # POST /api/postulaciones (Protegido - Solo Freelancer), PATCH /api/postulaciones/{id} (Protegido - Cliente acepta/rechaza)
+│
+└── view/ (Formularios e Interfaz de Usuario)
+    ├── components/               # Elementos reutilizables (NavBar con botón de Logout, Alertas)
+    ├── LoginView.java / .html    # Formulario que consume el AuthController y guarda el token
+    ├── RegistroView.java / .html # Formulario de registro con un combobox/select para elegir Rol
+    ├── DashboardClienteView.java # Vista protegida: Formulario "Publicar Proyecto" y tabla con postulantes
+    └── DashboardFreelancerView.java # Vista protegida: Lista de proyectos disponibles y botón "Postularse"
+
+para el Front:
+src/main/resources/
+└── static/
+    ├── css/
+    │   └── styles.css
+    ├── js/
+    │   ├── auth.js         # Lógica para login, registro y guardar el JWT
+    │   ├── cliente.js      # Lógica para publicar proyectos y ver postulantes
+    │   └── freelancer.js   # Lógica para ver proyectos y postularse
+    ├── index.html          # Página de Login / Registro
+    ├── dashboard-cliente.html
+    └── dashboard-freelancer.html
+
+Estructuras básicas pensadas en un inicio, esta sujeto a cambios y puede diferir del proyecto final aunque dudo que difiera mucho.
