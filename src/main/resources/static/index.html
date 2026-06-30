@@ -1,0 +1,83 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Freelancer Mini</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header>
+    <h1>Freelancer Mini</h1>
+    <div>
+        <span id="sessionInfo">Sin sesion</span>
+        <button id="logoutBtn" class="secondary" type="button">Salir</button>
+    </div>
+</header>
+<main>
+    <section class="grid">
+        <div class="panel">
+            <h2>Registro</h2>
+            <form id="registerForm">
+                <input name="username" placeholder="Usuario" required>
+                <input name="email" type="email" placeholder="Email" required>
+                <input name="password" type="password" placeholder="Password" required>
+                <select name="rol">
+                    <option value="CLIENTE">Cliente</option>
+                    <option value="FREELANCER">Freelancer</option>
+                </select>
+                <button>Crear cuenta</button>
+            </form>
+        </div>
+        <div class="panel">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <input name="username" placeholder="Usuario" value="cliente" required>
+                <input name="password" type="password" placeholder="Password" value="1234" required>
+                <button>Entrar</button>
+            </form>
+            <p class="status" id="status"></p>
+        </div>
+    </section>
+
+    <section class="grid" style="margin-top:16px">
+        <div class="panel" id="clientePanel">
+            <h2>Publicar proyecto</h2>
+            <form id="projectForm">
+                <input name="titulo" placeholder="Titulo" required>
+                <textarea name="descripcion" placeholder="Descripcion" required></textarea>
+                <input name="presupuesto" type="number" min="1" step="0.01" placeholder="Presupuesto" required>
+                <button>Publicar</button>
+            </form>
+            <h2 style="margin-top:18px">Postulaciones por proyecto</h2>
+            <form id="postulacionesForm">
+                <input name="proyectoId" type="number" min="1" placeholder="ID de proyecto" required>
+                <button class="secondary">Ver postulaciones</button>
+            </form>
+            <div class="list" id="postulacionesList"></div>
+        </div>
+        <div class="panel" id="freelancerPanel">
+            <h2>Perfil freelancer</h2>
+            <form id="profileForm">
+                <input name="tarifaHora" type="number" min="0" step="0.01" placeholder="Tarifa por hora">
+                <input name="habilidades" placeholder="Habilidades">
+                <textarea name="biografia" placeholder="Biografia"></textarea>
+                <button>Actualizar perfil</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="panel" style="margin-top:16px">
+        <h2>Proyectos disponibles</h2>
+        <button id="refreshProjects" class="secondary" type="button">Actualizar lista</button>
+        <div class="list" id="projectsList"></div>
+    </section>
+
+    <section class="panel" style="margin-top:16px">
+        <h2>Freelancers</h2>
+        <div class="list" id="freelancersList"></div>
+    </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

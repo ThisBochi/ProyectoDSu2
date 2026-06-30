@@ -1,0 +1,55 @@
+﻿CREATE DATABASE IF NOT EXISTS bd_freelancer CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE bd_freelancer;
+
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS postulaciones;
+DROP TABLE IF EXISTS proyectos;
+DROP TABLE IF EXISTS usuarios;
+SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE usuarios (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(60) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(120) NOT NULL UNIQUE,
+    rol VARCHAR(20) NOT NULL,
+    tarifa_hora DECIMAL(10,2),
+    habilidades VARCHAR(500),
+    biografia VARCHAR(1000),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE proyectos (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(150) NOT NULL,
+    descripcion VARCHAR(2000) NOT NULL,
+    presupuesto DECIMAL(12,2) NOT NULL,
+    estado VARCHAR(20) NOT NULL DEFAULT 'ABIERTO',
+    cliente_id BIGINT NOT NULL,
+    freelancer_asignado_id BIGINT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_proyectos_cliente FOREIGN KEY (cliente_id) REFERENCES usuarios(id),
+    CONSTRAINT fk_proyectos_freelancer FOREIGN KEY (freelancer_asignado_id) REFERENCES usuarios(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE postulaciones (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    proyecto_id BIGINT NOT NULL,
+    freelancer_id BIGINT NOT NULL,
+    propuesta_economica DECIMAL(12,2) NOT NULL,
+    carta_presentacion VARCHAR(2000) NOT NULL,
+    estado VARCHAR(20) NOT NULL DEFAULT 'PENDIENTE',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_postulaciones_proyecto FOREIGN KEY (proyecto_id) REFERENCES proyectos(id),
+    CONSTRAINT fk_postulaciones_freelancer FOREIGN KEY (freelancer_id) REFERENCES usuarios(id),
+    CONSTRAINT uk_postulacion_proyecto_freelancer UNIQUE (proyecto_id, freelancer_id)
+) ENGINE=InnoDB;
+
+-- Las contrasenas semilla reales se insertan desde DatabaseSeeder usando BCrypt.
+-- Usuarios de prueba al iniciar Spring Boot:
+-- cliente / 1234
+-- freelancer / 1234
+-- admin / 1234
